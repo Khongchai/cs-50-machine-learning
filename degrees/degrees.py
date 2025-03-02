@@ -92,37 +92,47 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
     queue = QueueFrontier()
+    visited_people = set()
+    visited_movies = set()
+    star_to_parent = {}
+    movie_to_parent = {}
 
-    parents = {}
+    # 2 movies
+    source_movies = people[source]['movies'] 
+    for movie_id in source_movies:
+        movie_to_parent[movie_id] = source
+        queue.add(movie_id)
 
-    visited = set()
+    while not queue.empty():
+        movie_id = queue.remove()
 
-    for movie in people[source].movies:
-        queue.add((movie, source))
+        if movie_id in visited_movies: 
+            continue
+        else: 
+            visited_movies.add(movie_id)
 
-    while (not queue.empty):
-        movie_id, parent_user_id = queue.remove()
-        people_id = movies[movie_id]
-        for person_id in people_id:
-            if (person_id in visited):
+        for star_id in movies[movie_id]['stars']:
+            if (star_id in visited_people): 
                 continue
-            parents[person_id] = (movie_id, parent_user_id)
+            else: 
+                visited_people.add(star_id)
 
-            visited.add(person_id)
-
-            if (person_id == target):
-                list = []
-                id = person_id
-                while (id != source):
-                    (parent_movie, parent_user) = parents[id]
-                    list.append((parent_movie, parent_user))
-                    id = parent_user
-                return list.reverse()
-            else:
-                parents[person_id] = (person_id, movie_id)
-                for movie in people[person_id].movies:
-                    queue.add(movie, person_id)
-
+            star_to_parent[star_id] = movie_id
+            if (star_id != target):
+                for starred_movie_id in people[star_id]['movies']:
+                    if (starred_movie_id != movie_id):
+                        movie_to_parent[starred_movie_id] = star_id
+                    queue.add(starred_movie_id)
+            else: 
+                path = []
+                current_star = star_id
+                while (current_star != source):
+                    m_parent = star_to_parent[current_star]
+                    path.append((m_parent, current_star))
+                    current_star = movie_to_parent[m_parent]
+                path.reverse()
+                return path
+  
     return None
 
 def person_id_for_name(name):
