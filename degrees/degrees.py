@@ -97,7 +97,6 @@ def shortest_path(source, target):
     star_to_parent = {}
     movie_to_parent = {}
 
-    # 2 movies
     source_movies = people[source]['movies'] 
     for movie_id in source_movies:
         movie_to_parent[movie_id] = source
