@@ -164,13 +164,9 @@ def shortest_path_flattened(source, target):
                 queue.add((star_movie_id, star_id))
         else:
             path = []
-            m = movie_id
-            p = person_id
-            while(p != source):
-               path.append((m, p)) 
-               tuple = parents[p]
-               m = tuple[0]
-               p = tuple[1]
+            while(person_id != source):
+                path.append((movie_id, person_id)) 
+                (movie_id, person_id) = parents[person_id]
             path.reverse()
             return path
 
