@@ -119,8 +119,8 @@ def shortest_path(source, target):
             star_to_parent[star_id] = movie_id
             if (star_id != target):
                 for starred_movie_id in people[star_id]['movies']:
-                    if (starred_movie_id != movie_id):
-                        movie_to_parent[starred_movie_id] = star_id
+                    if (starred_movie_id in visited_movies): continue
+                    movie_to_parent[starred_movie_id] = star_id
                     queue.add(starred_movie_id)
             else: 
                 path = []
