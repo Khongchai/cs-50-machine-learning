@@ -143,6 +143,7 @@ def shortest_path_flattened(source, target):
     """
     Traverses the flattened bipartite graph source -> (movie, person) -> (movie, person)
     """
+
     queue = QueueFrontier()
     visited_stars = set()
     parents = {}
@@ -157,18 +158,18 @@ def shortest_path_flattened(source, target):
         (movie_id, person_id) = queue.remove()
         if (person_id != target):
             for (star_movie_id, star_id) in neighbors_for_person(person_id):
-                if (star_id in visited_stars): 
-                    continue
+                if (star_id in visited_stars): continue
                 visited_stars.add(star_id)
                 parents[star_id] = (movie_id, person_id)
                 queue.add((star_movie_id, star_id))
-        else:
-            path = []
-            while(person_id != source):
-                path.append((movie_id, person_id)) 
-                (movie_id, person_id) = parents[person_id]
-            path.reverse()
-            return path
+            continue
+
+        path = []
+        while(person_id != source):
+            path.append((movie_id, person_id)) 
+            (movie_id, person_id) = parents[person_id]
+        path.reverse()
+        return path
 
     return None
 
