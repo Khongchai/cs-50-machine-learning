@@ -12,6 +12,10 @@ class StackFrontier():
     def add(self, node):
         self.frontier.append(node)
 
+    def addMany(self, nodes):
+        for node in nodes:
+            self.add(node)
+
     def contains_state(self, state):
         return any(node.state == state for node in self.frontier)
 

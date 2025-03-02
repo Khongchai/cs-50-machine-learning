@@ -83,13 +83,17 @@ def main():
             movie = movies[path[i + 1][0]]["title"]
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
-
 def shortest_path(source, target):
-    """
-    Returns the shortest list of (movie_id, person_id) pairs
-    that connect the source to the target.
+    # result = shortest_path_explicit_bipartite(source, target)
+    result = shortest_path_flattened(source, target)
+    return result
 
-    If no possible path, returns None.
+"""
+This thing is flaky wtf
+"""
+def shortest_path_explicit_bipartite(source, target):
+    """
+        Explicitly traverses the graph in its bipartite nature (person -> movie -> person -> movie)
     """
     queue = QueueFrontier()
     visited_people = set()
@@ -132,6 +136,44 @@ def shortest_path(source, target):
                 path.reverse()
                 return path
   
+    return None
+
+
+def shortest_path_flattened(source, target):
+    """
+    Traverses the flattened bipartite graph source -> (movie, person) -> (movie, person)
+    """
+    queue = QueueFrontier()
+    visited_stars = set()
+    parents = {}
+
+    visited_stars.add(source)
+    for (_m, _p) in neighbors_for_person(source):
+        parents[_p] = (None, source)
+        visited_stars.add(_p)
+        queue.add((_m, _p))
+
+    while not queue.empty():
+        (movie_id, person_id) = queue.remove()
+        if (person_id != target):
+            for (star_movie_id, star_id) in neighbors_for_person(person_id):
+                if (star_id in visited_stars): 
+                    continue
+                visited_stars.add(star_id)
+                parents[star_id] = (movie_id, person_id)
+                queue.add((star_movie_id, star_id))
+        else:
+            path = []
+            m = movie_id
+            p = person_id
+            while(p != source):
+               path.append((m, p)) 
+               tuple = parents[p]
+               m = tuple[0]
+               p = tuple[1]
+            path.reverse()
+            return path
+
     return None
 
 def person_id_for_name(name):
