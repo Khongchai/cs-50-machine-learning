@@ -10,12 +10,6 @@ X = "X"
 O = "O"
 EMPTY = None
 
-turn = X;
-
-type Board = List[List[int]]
-
-type Action = tuple[int, int]
-
 def initial_state():
     """
     Returns starting state of the board.
@@ -25,18 +19,30 @@ def initial_state():
             [EMPTY, EMPTY, EMPTY]]
 
 
-def player(board: Board):
+def player(board: List[List[int]]):
     """
     Returns player who has the next turn on a board.
     """
-    return X if turn == O else X
+    x_count = 0
+    o_count = 0
+    for row in board:
+        for cell in row:
+            if cell == X:
+                x_count += 1
+            elif cell == O:
+                o_count += 1
+    
+    turn = X if x_count <= o_count else O
+
+    return turn
 
 
-def actions(board: Board):
+
+def actions(board: List[List[int]]):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    actions: List[Action] = []
+    actions: List[tuple[int, int]] = []
 
     for i in range(len(board)):
         for j in range(len(board[i])):
@@ -45,7 +51,7 @@ def actions(board: Board):
 
     return actions
 
-def result(board: Board, action: tuple[int, int]):
+def result(board: List[List[int]], action: tuple[int, int]):
     """
     Returns the board that results from making move (i, j) on the board.
     """
@@ -56,11 +62,11 @@ def result(board: Board, action: tuple[int, int]):
 
     (i, j) = action
     deepCopiedBoard = deepcopy(board)
-    deepCopiedBoard[i][j] = turn
-    return board
+    deepCopiedBoard[i][j] = player(board)
+    return deepCopiedBoard
 
 
-def winner(board: Board):
+def winner(board: List[List[int]]):
     """
     Returns the winner of the game, if there is one.
     """
@@ -89,7 +95,7 @@ def winner(board: Board):
         return board[0][2]
     
 
-def terminal(board: Board):
+def terminal(board: List[List[int]]):
     """
     Returns True if game is over, False otherwise.
     """
@@ -100,7 +106,7 @@ def terminal(board: Board):
 
     return True
 
-def utility(board: Board):
+def utility(board: List[List[int]]):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
@@ -110,33 +116,51 @@ def utility(board: Board):
     return 1 if the_winner == "X" else -1
 
 
-def min_value(board: Board):
+def min_value(board: List[List[int]]):
     if terminal(board):
-        victor = utility(board)
-        return victor if victor != 0 else None
+        return (None, None)
     all_actions = actions(board)
     v = math.inf
+    best_action = None
     for action in all_actions:
         next_board = result(board, action)
-        v = min(v, max_value(next_board))
-    return v
+        (max, _a) = max_value(next_board)
+        if max == None: continue;
+        if v > max:
+            v = max
+            best_action = action
+    return (v, best_action)
 
-def max_value(board: Board):
+def max_value(board: List[List[int]]):
     if terminal(board):
-        victor = utility(board)
-        return victor if victor != 0 else None
+        return (None, None)
     all_actions = actions(board)
     v = -math.inf
+    best_action = None
     for action in all_actions:
         next_board = result(board, action)
-        v = max(v, min_value(next_board))
-    return v
+        (min, _a) = min_value(next_board)
+        if min == None: continue;
+        if v < min:
+            v = min
+            best_action = action
+    return (v, best_action)
 
-def minimax(board: Board):
+def minimax(board: List[List[int]]):
     """
     Returns the optimal action for the current player on the board.
     """
-    if turn == X:
-        return max_value(board)
-    return min_value(board)
+
+    result = None
+    if player(board) == X:
+        result = max_value(board)
+    else:
+        result = min_value(board)
+
+    if result == None:
+        return None
+
+    return result[1]
+    
+    
 
