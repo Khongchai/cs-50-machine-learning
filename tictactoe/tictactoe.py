@@ -42,12 +42,12 @@ def actions(board: List[List[int]]):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    actions: List[tuple[int, int]] = []
+    actions: set[tuple[int, int]] = set()
 
-    for i in range(len(board)):
-        for j in range(len(board[i])):
+    for i in range(3):
+        for j in range(3):
             if board[i][j] == EMPTY:
-                actions.append((i, j))
+                actions.add((i, j))
 
     return actions
 
