@@ -111,7 +111,7 @@ def utility(board: List[List[int]]):
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
     the_winner = winner(board)
-    if the_winner is None:
+    if the_winner == None:
         return 0
     return 1 if the_winner == "X" else -1
 
