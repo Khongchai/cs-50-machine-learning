@@ -43,12 +43,16 @@ def actions(board: Board):
             if board[i][j] == EMPTY:
                 actions.append((i, j))
 
+    return actions
+
 def result(board: Board, action: tuple[int, int]):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    if action == None or action.count != 2: 
-        raise Exception
+    if action == None:
+        raise Exception("Invalid action. Action is None.")
+    if len(action) != 2:
+        raise Exception(f"Invalid action. Action count is not 2: {len(action)}")
 
     (i, j) = action
     deepCopiedBoard = deepcopy(board)
@@ -96,7 +100,6 @@ def terminal(board: Board):
 
     return True
 
-
 def utility(board: Board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
@@ -105,7 +108,6 @@ def utility(board: Board):
     if the_winner is None:
         return 0
     return 1 if the_winner == "X" else -1
-
 
 
 def min_value(board: Board):
