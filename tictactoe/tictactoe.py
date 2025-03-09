@@ -61,6 +61,13 @@ def result(board: List[List[int]], action: tuple[int, int]):
         raise Exception(f"Invalid action. Action count is not 2: {len(action)}")
 
     (i, j) = action
+
+    if board[i][j] != None:
+        raise Exception("Move already taken")
+    if i > 3 or j > 3 or i < 0 or j < 0:
+        raise Exception("Out of bounds")
+
+
     deepCopiedBoard = deepcopy(board)
     deepCopiedBoard[i][j] = player(board)
     return deepCopiedBoard
@@ -73,20 +80,18 @@ def winner(board: List[List[int]]):
     
     # Check vertical
     for i in range(3):
-        if board[0][i] == board[1][i] == board[2][i]: 
+        if board[0][i] != None and board[0][i] == board[1][i] == board[2][i]: 
             return board[0][i]
     
     # Check horizontal
-    for row in board:
-        if board[i][0] == board[i][1] == board[i][2]:
+    for i in range(3):
+        if board[i][0] != None and board[i][0] == board[i][1] == board[i][2]:
             return board[i][0]
 
-    # Check diagonal 1
-    if board[0][0] == board[1][1] == board[2][2]: 
+    # Check diagonals
+    if board[0][0] != None and board[0][0] == board[1][1] == board[2][2]: 
         return board[0][0]
-
-    # Check diagonal 2
-    if board[0][2] == board[1][1] == board[2][0]:
+    if board[0][2] != None and board[0][2] == board[1][1] == board[2][0]:
         return board[0][2]
 
     return None
@@ -120,14 +125,14 @@ def utility(board: List[List[int]]):
 
 def min_value(board: List[List[int]]):
     if terminal(board):
-        return (None, None)
+        winner = utility(board)
+        return (winner, None)
     all_actions = actions(board)
     v = math.inf
     best_action = None
     for action in all_actions:
         next_board = result(board, action)
-        (max, _a) = max_value(next_board)
-        if max == None: continue;
+        (max, _action) = max_value(next_board)
         if v > max:
             v = max
             best_action = action
@@ -135,14 +140,14 @@ def min_value(board: List[List[int]]):
 
 def max_value(board: List[List[int]]):
     if terminal(board):
-        return (None, None)
+        winner = utility(board)
+        return (winner, None)
     all_actions = actions(board)
     v = -math.inf
     best_action = None
     for action in all_actions:
         next_board = result(board, action)
-        (min, _a) = min_value(next_board)
-        if min == None: continue;
+        (min, _action) = min_value(next_board)
         if v < min:
             v = min
             best_action = action
@@ -153,15 +158,8 @@ def minimax(board: List[List[int]]):
     Returns the optimal action for the current player on the board.
     """
 
-    result = None
-    if player(board) == X:
-        result = max_value(board)
-    else:
-        result = min_value(board)
-
-    if result == None:
-        return None
-
+    # AI always try to minimize
+    result = min_value(board)
     return result[1]
     
     
