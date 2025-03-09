@@ -132,9 +132,9 @@ def min_value(board: List[List[int]]):
     best_action = None
     for action in all_actions:
         next_board = result(board, action)
-        (max, _action) = max_value(next_board)
-        if v > max:
-            v = max
+        (max_score, _action) = max_value(next_board)
+        if v > max_score:
+            v = max_score
             best_action = action
     return (v, best_action)
 
@@ -147,9 +147,9 @@ def max_value(board: List[List[int]]):
     best_action = None
     for action in all_actions:
         next_board = result(board, action)
-        (min, _action) = min_value(next_board)
-        if v < min:
-            v = min
+        (min_score, _action) = min_value(next_board)
+        if v < min_score:
+            v = min_score
             best_action = action
     return (v, best_action)
 
