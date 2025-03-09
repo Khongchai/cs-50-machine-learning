@@ -70,11 +70,6 @@ def winner(board: List[List[int]]):
     """
     Returns the winner of the game, if there is one.
     """
-
-    # Game not yet over
-    for row in board:
-        if EMPTY in row: 
-            return None
     
     # Check vertical
     for i in range(3):
@@ -93,6 +88,8 @@ def winner(board: List[List[int]]):
     # Check diagonal 2
     if board[0][2] == board[1][1] == board[2][0]:
         return board[0][2]
+
+    return None
     
 
 def terminal(board: List[List[int]]):
@@ -100,10 +97,15 @@ def terminal(board: List[List[int]]):
     Returns True if game is over, False otherwise.
     """
     # Game not yet over
+    w = winner(board)
+    if w != None:
+        return True
+
+    # Else if no winner found, check if there are still 
+    # empty cells left.
     for row in board:
         if EMPTY in row: 
             return False
-
     return True
 
 def utility(board: List[List[int]]):
