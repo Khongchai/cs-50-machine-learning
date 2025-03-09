@@ -159,7 +159,12 @@ def minimax(board: List[List[int]]):
     """
 
     # AI always try to minimize
-    result = min_value(board)
+    result = None
+    if player(board) == X:
+        result = max_value(board)
+    else: 
+        result = min_value(board)
+    
     return result[1]
     
     
