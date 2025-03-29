@@ -49,9 +49,11 @@ knowledge2 = And(
 # B says "C is a knave."
 # C says "A is a knight."
 knowledge3 = And(
-    Or(Implication(AKnight, BKnave), Implication(AKnave, BKnight)),
-    Or(Implication(BKnave, CKnight), Implication(BKnight, CKnave)),
-    Or(Implication(CKnight, AKnight), Implication(CKnave, AKnave))
+    Or(
+        And(AKnight, And(BKnave, CKnight)),
+        And(AKnave, And(BKnave, CKnave)),
+    ),
+    Implication(BKnave, And(AKnight, CKnight))
 )
 
 

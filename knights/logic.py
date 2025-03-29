@@ -180,8 +180,9 @@ class Implication(Sentence):
         return f"Implication({self.antecedent}, {self.consequent})"
 
     def evaluate(self, model):
-        return ((not self.antecedent.evaluate(model))
-                or self.consequent.evaluate(model))
+        ant = self.antecedent.evaluate(model)
+        con = self.consequent.evaluate(model)
+        return not ant or con
 
     def formula(self):
         antecedent = Sentence.parenthesize(self.antecedent.formula())
