@@ -218,7 +218,6 @@ class MinesweeperAI():
         for found in found_mines:
             self.mark_mine(found)
 
-        # Add new sentences
         new_knowledge = []
         for superset in self.knowledge:
             for subset in self.knowledge:
