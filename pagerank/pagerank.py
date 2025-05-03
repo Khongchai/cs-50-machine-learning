@@ -48,6 +48,7 @@ def crawl(directory):
     return pages
 
 
+# The random surfer thing. This combined with sample_pagerank tells us which page to visit.
 def transition_model(corpus, page, damping_factor):
     """
     Return a probability distribution over which page to visit next,
@@ -57,8 +58,18 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
 
+    distribution = dict()
+    pages = corpus.keys()
+    
+    for p in pages:
+        distribution[p] = (1 - damping_factor) / len(pages) if distribution[p] is not None else 0
+
+    direct_links = set(corpus[page])
+    for link in direct_links:
+        distribution[link] += damping_factor / len(direct_links)
+
+    return distribution
 
 def sample_pagerank(corpus, damping_factor, n):
     """
@@ -69,8 +80,25 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
 
+    pages = corpus.keys()
+
+    ranks = dict()
+    for p in pages:
+        ranks[p] = 0
+
+    next = random(pages)
+
+    for _ in range(n):
+        links = pages[next]
+        distribution = transition_model(corpus, next, damping_factor)
+        ranks[next] += 1
+        next = random.choices(links, distribution)
+
+    for r in ranks:
+        ranks[r] /= n
+
+    return ranks
 
 def iterate_pagerank(corpus, damping_factor):
     """
@@ -81,8 +109,31 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    pages = corpus.keys()
+    
+    page_ranks = dict()
 
+    links_to = dict()
+    for k, v in corpus.items():
+        if links_to[v] is None:
+            links_to[v] = set()
+        links_to[v].add(k)
+
+# todo not doing the subtracting (giving away) thing yet.
+    diff = 1
+    ep = sys.float_info.epsilon
+    while(diff > ep):
+        for p in pages:
+            major_weight = 0
+            for link in links_to[p]:
+                major_weight += damping_factor * (page_ranks[link] / len(links_to[p]))
+
+            minor_weight = ((1 - damping_factor) / len(pages)) 
+            distribution = major_weight + minor_weight
+            page_ranks[p] = distribution
+            diff = max(distribution, diff)
+
+    return page_ranks
 
 if __name__ == "__main__":
     main()
