@@ -1,6 +1,7 @@
 import csv
 import itertools
 import sys
+import math
 
 PROBS = {
 
@@ -43,6 +44,7 @@ def main():
     if len(sys.argv) != 2:
         sys.exit("Usage: python heredity.py data.csv")
     people = load_data(sys.argv[1])
+    # people = load_data("data/family0.csv")
 
     # Keep track of gene and trait probabilities for each person
     probabilities = {
@@ -147,14 +149,14 @@ def joint_probability(people: dict, one_gene: set, two_genes: set, have_trait):
     def check_trait(person):
         return person in have_trait
 
-    prob = 1
+    probs = []
     for person in names:
         person_gene = get_gene(person)
         person_has_trait: bool = check_trait(person)
         person_mom = people[person]["mother"]
-        person_dad = people[person]["dad"]
+        person_dad = people[person]["father"]
 
-        person_gene_probs
+        person_gene_probs = 0
         if person_mom and person_dad:
             distribution = person_gene / 2
             mom_gene = (get_gene(person_mom) * distribution) 
@@ -162,8 +164,9 @@ def joint_probability(people: dict, one_gene: set, two_genes: set, have_trait):
             mut = PROBS['mutation']
             chance_from_mom = mom_gene - mut if mom_gene > 0 else mut
             chance_from_dad = dad_gene - mut if dad_gene > 0 else mut
-            chance_not_mom = 1 - chance_from_mom
-            chance_not_dad = 1 - chance_from_dad
+            print(chance_from_mom)
+            chance_not_mom = max(0, 1 - chance_from_mom)
+            chance_not_dad = max(0, 1 - chance_from_dad)
             person_gene_probs = (chance_not_mom * chance_from_dad) + (chance_from_mom * chance_not_dad) 
 
         else:
@@ -171,8 +174,9 @@ def joint_probability(people: dict, one_gene: set, two_genes: set, have_trait):
         
         person_trait_probs = PROBS['trait'][person_gene][person_has_trait]
 
-        prob *= (person_trait_probs * person_gene_probs)
+        probs.append(person_trait_probs * person_gene_probs)
 
+    prob = math.prod(probs)
     return prob
 
 def update(probabilities, one_gene: set, two_genes: set, have_trait: set, p):
