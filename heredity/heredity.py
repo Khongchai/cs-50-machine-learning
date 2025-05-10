@@ -41,10 +41,10 @@ PROBS = {
 def main():
 
     # Check for proper usage
-    if len(sys.argv) != 2:
-        sys.exit("Usage: python heredity.py data.csv")
-    people = load_data(sys.argv[1])
-    # people = load_data("data/family0.csv")
+    # if len(sys.argv) != 2:
+    #     sys.exit("Usage: python heredity.py data.csv")
+    # people = load_data(sys.argv[1])
+    people = load_data("data/family0.csv")
 
     # Keep track of gene and trait probabilities for each person
     probabilities = {
@@ -150,6 +150,7 @@ def joint_probability(people: dict, one_gene: set, two_genes: set, have_trait):
         return person in have_trait
 
     probs = []
+    mutation = PROBS['mutation']
     for person in names:
         person_gene = get_gene(person)
         person_has_trait: bool = check_trait(person)
@@ -158,16 +159,21 @@ def joint_probability(people: dict, one_gene: set, two_genes: set, have_trait):
 
         person_gene_probs = 0
         if person_mom and person_dad:
-            distribution = person_gene / 2
-            mom_gene = (get_gene(person_mom) * distribution) 
-            dad_gene = (get_gene(person_dad) * distribution)
-            mut = PROBS['mutation']
-            chance_from_mom = mom_gene - mut if mom_gene > 0 else mut
-            chance_from_dad = dad_gene - mut if dad_gene > 0 else mut
-            print(chance_from_mom)
-            chance_not_mom = max(0, 1 - chance_from_mom)
-            chance_not_dad = max(0, 1 - chance_from_dad)
-            person_gene_probs = (chance_not_mom * chance_from_dad) + (chance_from_mom * chance_not_dad) 
+
+            mom_gene = get_gene(person_mom)
+            dad_gene = get_gene(person_dad)
+            mother_pass = 1 - mutation if mom_gene == 2 else 0.5 if mom_gene is 1 else mutation
+            father_pass = 1 - mutation if dad_gene == 2 else 0.5 if mom_gene is 1 else mutation
+            person_gene_probs = 1
+            # probability of both mom and dad
+            if person_gene == 2:
+                person_gene_probs = mother_pass * father_pass
+            # probability of not dad
+            elif person_gene == 1:
+                person_gene_probs = mother_pass * (1 - father_pass) + (1 - mother_pass) * father_pass
+            # probability of not mom
+            elif person_gene == 0:
+                person_gene_probs = (1 - mother_pass) * (1 - father_pass)
 
         else:
             person_gene_probs = PROBS["gene"][person_gene]
