@@ -182,7 +182,7 @@ def update(probabilities, one_gene: set, two_genes: set, have_trait: set, p):
     Which value for each distribution is updated depends on whether
     the person is in `have_gene` and `have_trait`, respectively.
     """
-    people = one_gene.union(two_genes).union(have_trait)
+    people = set(probabilities)
     for person in people:
         gene: int = 1 if person in one_gene else 2 if person in two_genes else 0
         trait: bool = person in have_trait
