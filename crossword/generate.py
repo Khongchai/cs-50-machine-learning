@@ -141,12 +141,12 @@ class CrosswordCreator():
             arcs = [k for k in self.crossword.overlaps] # k is a tuple (i, j)
 
         while len(arcs) > 0:
-            (i, j) = arcs.pop(0)
-            if self.revise(i, j):
-                if len(self.domains[i]) == 0:
+            (x, y) = arcs.pop(0)
+            if self.revise(x, y):
+                if len(self.domains[x]) == 0:
                     return False
-                for n in self.crossword.neighbors(i):
-                    arcs.append((i, n))
+                for n in self.crossword.neighbors(x):
+                    arcs.append((x, n))
 
         return True
 
@@ -166,8 +166,20 @@ class CrosswordCreator():
             values = assignment[var]
             if (var.length != len(values)):
                 return False
+        
+        for a1 in assignment:
+            for a2 in assignment:
+                if (a1 == a2):
+                    continue
+                overlap = self.crossword.overlaps[a1, a2]
+                if (overlap == None):
+                    continue
+                (i, j) = overlap
+                if (assignment[a1][i] != assignment[a2][j]):
+                    return False
 
         return True
+
 
     def order_domain_values(self, var, assignment):
         """
