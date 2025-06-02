@@ -100,8 +100,7 @@ class CrosswordCreator():
          constraints; in this case, the length of the word.)
         """
         for var in self.domains:
-            words_domain = self.domains[var].copy()
-            for word in words_domain:
+            for word in self.domains[var].copy():
                 if (len(word) != var.length):
                     self.domains[var].remove(word)
 
@@ -114,7 +113,25 @@ class CrosswordCreator():
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-        raise NotImplementedError
+
+        overlap = self.crossword.overlaps[x, y]
+
+        if (overlap is None):
+            return False
+
+        (i, j) = overlap
+        revised = False
+        for x_word in self.domains[x].copy():
+            valid = False
+            for y_word in self.domains[y]:
+                if (x_word[i] == y_word[j]): # if there is at least one value in x that satisfies the constraint, continue
+                    valid = True
+                    continue
+            if (valid == False):
+                self.domains[x].remove(x_word)
+                revised = True
+
+        return revised
 
     def ac3(self, arcs=None):
         """
