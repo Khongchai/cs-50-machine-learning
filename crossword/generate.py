@@ -122,12 +122,7 @@ class CrosswordCreator():
         (i, j) = overlap
         revised = False
         for x_word in self.domains[x].copy():
-            valid = False
-            for y_word in self.domains[y]:
-                if (x_word[i] == y_word[j]): # if there is at least one value in x that satisfies the constraint, continue
-                    valid = True
-                    continue
-            if (valid == False):
+            if (not any(x_word[i] == y_word[j] for y_word in self.domains[y])):
                 self.domains[x].remove(x_word)
                 revised = True
 
