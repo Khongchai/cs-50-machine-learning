@@ -113,6 +113,7 @@ class Crossword():
             for v2 in self.variables:
                 if v1 == v2:
                     continue
+                # A cell is like this (1, 2) or (i, j) where i is row and j is column
                 cells1 = v1.cells
                 cells2 = v2.cells
                 intersection = set(cells1).intersection(cells2)
