@@ -198,7 +198,7 @@ class CrosswordCreator():
                 (i, j) = self.crossword.overlaps[var, neighbor]
                 neighbor_domain = self.domains[neighbor] if neighbor not in assignment else [assignment[neighbor]]
                 for n_word in neighbor_domain:
-                    if word[i] == n_word[j]:
+                    if word[i] != n_word[j]:
                         word_value_map[word] += 1
         
         sorted_by_value_asc = [k for (k, _) in sorted(word_value_map.items(), key=lambda item: item[1])]
