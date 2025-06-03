@@ -188,7 +188,22 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        raise NotImplementedError
+
+        word_value_map: dict[Variable, int] = {
+            word: 0 for word in self.domains[var]
+        }
+
+        for word in self.domains[var]:
+            for neighbor in self.crossword.neighbors(var):
+                (i, j) = self.crossword.overlaps[var, neighbor]
+                neighbor_domain = self.domains[neighbor] if neighbor not in assignment else [assignment[neighbor]]
+                for n_word in neighbor_domain:
+                    if word[i] == n_word[j]:
+                        word_value_map[word] += 1
+        
+        sorted_by_value_asc = [k for (k, _) in sorted(word_value_map.items(), key=lambda item: item[1])]
+
+        return sorted_by_value_asc
 
     def select_unassigned_variable(self, assignment):
         """
