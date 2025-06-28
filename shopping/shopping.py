@@ -6,7 +6,6 @@ from sklearn.neighbors import KNeighborsClassifier
 
 TEST_SIZE = 0.4
 
-
 def main():
 
     # Check command-line arguments
@@ -59,7 +58,51 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+
+    month_index = {
+        "Jan": 0,
+        "Feb": 1,
+        "Mar": 2,
+        "Apr": 3,
+        "May": 4,
+        "June": 5,
+        "Jul": 6,
+        "Aug": 7,
+        "Sep": 8,
+        "Oct": 9,
+        "Nov": 10,
+        "Dec": 11
+    }
+
+    evidence = []
+    labels = []
+
+    with open(filename, newline="") as file:
+        csvFile = csv.DictReader(file)
+        # list of strings
+        for row in csvFile:
+            labels.append(1 if row["Revenue"] == "TRUE" else 0)
+            new_evidence = []
+            new_evidence.append(int(row["Administrative"]))
+            new_evidence.append(float(row["Administrative_Duration"]))
+            new_evidence.append(int(row["Informational"]))
+            new_evidence.append(float(row["Informational_Duration"]))
+            new_evidence.append(int(row["ProductRelated"]))
+            new_evidence.append(float(row["ProductRelated_Duration"]))
+            new_evidence.append(float(row["BounceRates"]))
+            new_evidence.append(float(row["ExitRates"]))
+            new_evidence.append(float(row["PageValues"]))
+            new_evidence.append(float(row["SpecialDay"]))
+            new_evidence.append(month_index[(row["Month"])])
+            new_evidence.append(int(row["OperatingSystems"]))
+            new_evidence.append(int(row["Browser"]))
+            new_evidence.append(int(row["Region"]))
+            new_evidence.append(int(row["TrafficType"]))
+            new_evidence.append(1 if row["VisitorType"] == "Returning_Visitor" else 0)
+            new_evidence.append(1 if row["Weekend"] == "TRUE" else 0)
+            evidence.append(new_evidence)
+
+    return evidence, labels
 
 
 def train_model(evidence, labels):
