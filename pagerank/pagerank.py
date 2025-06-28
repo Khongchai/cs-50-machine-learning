@@ -8,11 +8,6 @@ SAMPLES = 10000
 
 
 def main():
-    corpus = {
-        "1.html": {"2.html", "3.html"},
-        "2.html": {"3.html"},
-        "3.html": {"2.html"}
-    }
     if len(sys.argv) != 2:
         sys.exit("Usage: python pagerank.py corpus")
     corpus = crawl(sys.argv[1])
@@ -53,6 +48,7 @@ def crawl(directory):
     return pages
 
 
+# This is the page rank equation
 def transition_model(corpus, page, damping_factor):
     """
     Return a probability distribution over which page to visit next,
@@ -64,7 +60,6 @@ def transition_model(corpus, page, damping_factor):
     """
 
     pages = corpus.keys()
-
     distribution = {
         # initialize with random distribution
         page: (1 - damping_factor) / len(pages) for page in pages
@@ -76,7 +71,7 @@ def transition_model(corpus, page, damping_factor):
 
     return distribution
 
-def sample_pagerank(corpus, damping_factor, n):
+def sample_pagerank(corpus: dict[str], damping_factor, n):
     """
     Return PageRank values for each page by sampling `n` pages
     according to transition model, starting with a page at random.
@@ -87,21 +82,23 @@ def sample_pagerank(corpus, damping_factor, n):
     """
 
     pages = corpus.keys()
+    ranks = {
+        p: 0 for p in pages
+    }
 
-    ranks = dict()
-    for p in pages:
-        ranks[p] = 0
-
-    next = random.random(pages)
+    next = random.sample(sorted(pages), 1)[0]
 
     for _ in range(n):
-        links = pages[next]
         distribution = transition_model(corpus, next, damping_factor)
-        ranks[next] += 1
-        next = random.choices(links, distribution)
+        for page in pages:
+            ranks[page] += distribution[page]
 
-    for r in ranks:
-        ranks[r] /= n
+        links = corpus[next]
+        weights = [distribution[link] for link in links]
+        next = random.choices(sorted(links), weights=weights, k=1)[0]
+
+    for page in ranks:
+        ranks[page] /= n
 
     return ranks
 
