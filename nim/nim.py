@@ -155,9 +155,10 @@ class NimAI():
         If multiple actions have the same Q-value, any of those
         options is an acceptable return value.
         """
-        # Assume state always has length > 0
+
         choose_random = epsilon and random.uniform(0, 1) > self.epsilon
         if choose_random:
+            # this is wrong, we should probably choose a random action that contains the current state!
             values = list(self.q.values())
             return random.choice(values)
 
