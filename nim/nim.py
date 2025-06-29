@@ -156,14 +156,14 @@ class NimAI():
         options is an acceptable return value.
         """
         # Assume state always has length > 0
-        choose_random = epsilon and random.unifrom(0, 1) > self.epsilon
+        choose_random = epsilon and random.uniform(0, 1) > self.epsilon
         if choose_random:
-            (_, action) = random.choice(self.q)
-            return action
+            values = list(self.q.values())
+            return random.choice(values)
 
         best_q: tuple[list[int], tuple[int, int]] = None
         for next in self.q:
-            if state != next[0]:
+            if tuple(state) != next[0]:
                 continue
             best_q = next if best_q is None else best_q
             if self.q[next] > self.q[best_q]:
