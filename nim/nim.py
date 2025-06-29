@@ -136,7 +136,7 @@ class NimAI():
         """
         best = 0
         for (s, a) in self.q:
-            if s == state:
+            if s == tuple(state):
                 best = max(self.q[(s, a)], best)
         return best
 
