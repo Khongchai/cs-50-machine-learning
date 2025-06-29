@@ -122,7 +122,7 @@ class NimAI():
         is the sum of the current reward and estimated future rewards.
         """
         zukunfte_belohnung = reward + future_rewards
-        self.q[(state, action)] = old_q + self.alpha * (zukunfte_belohnung - old_q)
+        self.q[(tuple(state), action)] = old_q + self.alpha * (zukunfte_belohnung - old_q)
 
     def best_future_reward(self, state: list[int]) -> list[int]:
         """
