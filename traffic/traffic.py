@@ -16,11 +16,13 @@ TEST_SIZE = 0.4
 def main():
 
     # Check command-line arguments
-    if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: python traffic.py data_directory [model.h5]")
+    # if len(sys.argv) not in [2, 3]:
+    #     sys.exit("Usage: python traffic.py data_directory [model.h5]")
+    data_dir = "gtsrb"
+    model_name = "my_model"
 
     # Get image arrays and labels for all image files
-    images, labels = load_data(sys.argv[1])
+    images, labels = load_data(data_dir)
 
     # Split data into training and testing sets
     labels = tf.keras.utils.to_categorical(labels)
@@ -39,9 +41,8 @@ def main():
 
     # Save model to file
     if len(sys.argv) == 3:
-        filename = sys.argv[2]
-        model.save(filename)
-        print(f"Model saved to {filename}.")
+        model.save(model_name)
+        print(f"Model saved to {model_name}.")
 
 
 def load_data(data_dir):
@@ -58,7 +59,21 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    raise NotImplementedError
+    images = []
+    labels = []
+    directories = os.listdir(data_dir)
+    for i in range(len(directories)): 
+        files_dir = os.path.join(data_dir, directories[i])
+        files = os.listdir(files_dir)
+        for j in range(len(files)):
+            file_path = os.path.join(files_dir, files[j])
+            image = cv2.imread(file_path, cv2.IMREAD_COLOR_RGB)
+            resized = cv2.resize(image, (IMG_WIDTH, IMG_HEIGHT))
+            images.append(resized)
+            labels.append(i)
+         
+    return (images, labels)
+
 
 
 def get_model():
